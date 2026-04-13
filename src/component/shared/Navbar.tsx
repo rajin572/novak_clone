@@ -4,7 +4,7 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
-import { useGSAP, gsap, ScrollTrigger } from "@/lib/gsap-util";
+import { useGSAP, gsap } from "@/lib/gsap-util";
 import Container from "../ui/Container";
 import { navItems } from "@/data/data";
 
@@ -18,30 +18,30 @@ const Navbar = () => {
 
     useGSAP(
         () => {
-            const show = gsap.fromTo(
-                navWrapperRef.current,
-                { y: "0", paused: true },
-                { y: "-100%", duration: 0.8, ease: "power2.inOut", paused: true },
-            );
-
-            ScrollTrigger.create({
-                trigger: navWrapperRef.current,
-                start: "top top",
-                end: "max",
-                pin: false,
-                onUpdate: (self) => {
-                    if (!mobileMenuOpen && self.scroll() === 0 && self.direction === -1) {
-                        show.reverse();
-                        setScrolled(false);
-                        return;
-                    }
-                    if (!mobileMenuOpen && self.direction === 1) {
-                        show.play();
-                        setScrolled(false);
-                    } else {
-                        show.reverse();
-                        setScrolled(true);
-                    }
+            const show = gsap.to(navWrapperRef.current, {
+                y: "-100%",
+                duration: 0.8,
+                ease: "power2.inOut",
+                paused: true,
+                scrollTrigger: {
+                    trigger: navWrapperRef.current,
+                    start: "top top",
+                    end: "max",
+                    pin: false,
+                    onUpdate: (self) => {
+                        if (!mobileMenuOpen && self.scroll() === 0 && self.direction === -1) {
+                            show.reverse();
+                            setTimeout(() => setScrolled(false), 1000);
+                            return;
+                        }
+                        if (!mobileMenuOpen && self.direction === 1) {
+                            show.play();
+                            setTimeout(() => setScrolled(false), 100);
+                        } else {
+                            show.reverse();
+                            setScrolled(true);
+                        }
+                    },
                 },
             });
         },
@@ -80,7 +80,7 @@ const Navbar = () => {
     return (
         <div
             ref={navWrapperRef}
-            className={`z-99999! shadow-none py-2 text-base-color transition-colors duration-1000 ${scrolled && "backdrop-blur-md"}`}
+            className={`z-99999! shadow-none py-2 text-base-color ${scrolled && "backdrop-blur-md"}`}
         >
             <Container>
                 <header className="text-base flex justify-between items-center z-99999 ">
