@@ -13,12 +13,14 @@ const Works = () => {
             const textSplit = SplitText.create(".text", {
                 type: "lines words",
                 mask: "lines",
+                autoSplit: true
             });
 
             gsap.from(textSplit.words, {
                 yPercent: 100,
                 ease: "power2.inOut",
                 stagger: 0.1,
+                smartWrap: true,
                 scrollTrigger: {
                     trigger: ".works-header",
                     start: "top 90%",
@@ -40,7 +42,8 @@ const Works = () => {
                         scrollTrigger: {
                             trigger: el,
                             start: "top 80%",
-                            toggleActions: "restart reverse restart reverse",
+                            end: "bottom 80%",
+                            toggleActions: "restart none none reverse",
                         },
                     },
                 );

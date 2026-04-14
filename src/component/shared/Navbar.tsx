@@ -4,7 +4,7 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
-import { useGSAP, gsap } from "@/lib/gsap-util";
+import { useGSAP, gsap, ScrollTrigger } from "@/lib/gsap-util";
 import Container from "../ui/Container";
 import { navItems } from "@/data/data";
 
@@ -23,25 +23,26 @@ const Navbar = () => {
                 duration: 0.8,
                 ease: "power2.inOut",
                 paused: true,
-                scrollTrigger: {
-                    trigger: navWrapperRef.current,
-                    start: "top top",
-                    end: "max",
-                    pin: false,
-                    onUpdate: (self) => {
-                        if (!mobileMenuOpen && self.scroll() === 0 && self.direction === -1) {
-                            show.reverse();
-                            setTimeout(() => setScrolled(false), 1000);
-                            return;
-                        }
-                        if (!mobileMenuOpen && self.direction === 1) {
-                            show.play();
-                            setTimeout(() => setScrolled(false), 100);
-                        } else {
-                            show.reverse();
-                            setScrolled(true);
-                        }
-                    },
+            });
+
+            ScrollTrigger.create({
+                trigger: navWrapperRef.current,
+                start: "top top",
+                end: "max",
+                pin: false,
+                onUpdate: (self) => {
+                    if (!mobileMenuOpen && self.scroll() === 0 && self.direction === -1) {
+                        show.reverse();
+                        setTimeout(() => setScrolled(false), 1000);
+                        return;
+                    }
+                    if (!mobileMenuOpen && self.direction === 1) {
+                        show.play();
+                        setTimeout(() => setScrolled(false), 100);
+                    } else {
+                        show.reverse();
+                        setScrolled(true);
+                    }
                 },
             });
         },

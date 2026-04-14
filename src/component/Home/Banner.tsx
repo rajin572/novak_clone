@@ -9,7 +9,8 @@ const Banner = () => {
         () => {
             const textSplit = SplitText.create(".text", {
                 type: "words",
-                mask: "words"
+                mask: "words",
+                autoSplit: true
             });
 
             gsap.from(textSplit.words, {
@@ -17,6 +18,7 @@ const Banner = () => {
                 ease: "power2.inOut",
                 duration: 1,
                 stagger: 0.03,
+                smartWrap: true,
                 scrollTrigger: {
                     trigger: ".hero-wrapper",
                     start: "top center",
