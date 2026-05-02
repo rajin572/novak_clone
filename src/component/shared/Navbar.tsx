@@ -20,7 +20,7 @@ const Navbar = () => {
         () => {
             const show = gsap.to(navWrapperRef.current, {
                 y: "-100%",
-                duration: 0.8,
+                duration: 0.5,
                 ease: "power2.inOut",
                 paused: true,
             });

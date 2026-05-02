@@ -1,52 +1,111 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import { useRef } from "react";
 import { gsap } from "gsap";
+import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import Image from "next/image";
+import Link from "next/link";
 
-const HorizontalScroll = () => {
-    const h1Ref = useRef<HTMLHeadingElement>(null);
+gsap.registerPlugin(ScrollTrigger, useGSAP);
+
+const IMAGES = [
+    "https://bzm-graphics-2026.vercel.app/portfolio/bb-mascara-01.png",
+    "https://bzm-graphics-2026.vercel.app/portfolio/smakk-raquel.jpg",
+    "https://bzm-graphics-2026.vercel.app/portfolio/floof-hero.png",
+    "https://bzm-graphics-2026.vercel.app/portfolio/aziza-and-chineze.jpg",
+    "https://bzm-graphics-2026.vercel.app/portfolio/veggie-loops.webp",
+    "https://bzm-graphics-2026.vercel.app/video/work-cycle.gif",
+];
+
+export default function HorizontalScroll() {
+    const sectionRef = useRef<HTMLDivElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
 
-    useEffect(() => {
-        // Make sure we are in browser
-        if (typeof window === "undefined") return;
+    useGSAP(
+        () => {
+            const section = sectionRef.current;
+            const container = containerRef.current;
+            if (!section || !container) return;
 
-        gsap.registerPlugin(ScrollTrigger);
+            const cards = gsap.utils.toArray<HTMLElement>(".scroll-card");
 
-        if (!h1Ref.current || !containerRef.current) return;
+            // totalScroll: push until last card fully exits left side of screen
+            const totalScroll = container.scrollWidth - window.innerWidth;
+            // const totalScroll = container.scrollWidth - (window.innerWidth - container.offsetWidth);
 
-        // Use context for React cleanup
-        const ctx = gsap.context(() => {
-            gsap.to(h1Ref.current, {
-                transform: "translateX(-260%)",
+            const scrollTrack = gsap.to(container, {
+                x: -totalScroll,
+                duration: totalScroll,
+                ease: "none",
                 scrollTrigger: {
-                    trigger: containerRef.current,
-                    start: "top 0%",
-                    end: "top -260%",
-                    scrub: 2,
+                    trigger: section,
+                    start: "top top",
+                    end: () => `+=${totalScroll}`,
+                    scrub: true,
                     pin: true,
-                    // markers: true, // optional for debugging
+                    anticipatePin: 1,
                 },
             });
-        }, containerRef);
 
-        return () => {
-            ctx.revert(); // cleanup
-        };
-    }, []);
+            cards.forEach((card) => {
+                gsap.fromTo(
+                    card,
+                    { opacity: 0.7, y: "50%", scale: 0.8 },
+                    {
+                        opacity: 1,
+                        y: 0,
+                        scale: 1,
+                        ease: "power2.out",
+                        scrollTrigger: {
+                            trigger: card,
+                            start: "left 95%",
+                            end: "center 90%",
+                            scrub: true,
+                            containerAnimation: scrollTrack,
+                        },
+                    }
+                );
+            });
+        },
+        { scope: sectionRef }
+    );
 
     return (
-        <div
-            ref={containerRef}
-            id="page3"
-            className="bg-red-500 overflow-hidden p-12 h-screen"
+        <section
+            ref={sectionRef}
+            className="relative overflow-hidden w-full h-screen"
+            style={{ background: "inherit" }}
         >
-            <h1 className="whitespace-nowrap m-0 uppercase text-[40vw]" ref={h1Ref}>
-                Animation
-            </h1>
-        </div>
+            <div
+                ref={containerRef}
+                className="flex flex-nowrap items-center h-full w-full"
+                style={{ willChange: "transform" }}
+            >
+                {IMAGES.map((src, i) => (
+                    <Link
+                        href={src}
+                        target="_blank"
+                        data-cursor-label={`Visit site `}
+                        data-cursor="view-card"
+                        key={i}
+                        className="scroll-card flex-none w-screen md:w-[50vw] h-full opacity-0"
+                        style={{ willChange: "transform, opacity" }}
+                    >
+                        <Image
+                            width={1000}
+                            height={1000}
+                            src={src}
+                            alt={`Card ${i + 1}`}
+                            sizes="(max-width: 768px) 80vw, 50vw"
+                            className="w-full h-full object-cover"
+                            draggable={false}
+                            fetchPriority="high"
+                            priority
+                        />
+                    </Link>
+                ))}
+            </div>
+        </section>
     );
-};
-
-export default HorizontalScroll;
+}

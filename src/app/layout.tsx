@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+import LenisSmoothScroll from "@/component/ui/LenisSmoothScroll";
 
 
 export const clashDisplay = localFont({
@@ -51,6 +52,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <LenisSmoothScroll />
       <body className={`${clashDisplay.className} antialiased`}>
         {children}
       </body>

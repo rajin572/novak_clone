@@ -11,20 +11,20 @@ const Works = () => {
     useGSAP(
         () => {
             const textSplit = SplitText.create(".text", {
-                type: "lines words",
-                mask: "lines",
-                autoSplit: true
+                type: "words",
+                mask: "words",
+                autoSplit: true,
+                smartWrap: true,
             });
 
             gsap.from(textSplit.words, {
                 yPercent: 100,
+                duration: 1,
                 ease: "power2.inOut",
                 stagger: 0.1,
-                smartWrap: true,
                 scrollTrigger: {
                     trigger: ".works-header",
                     start: "top 90%",
-                    end: "bottom top",
                     toggleActions: "restart pause restart pause",
                 },
             });
