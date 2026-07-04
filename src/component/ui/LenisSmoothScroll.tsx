@@ -12,7 +12,7 @@ const LenisSmoothScroll = () => {
 
     useEffect(() => {
         function update(time: number) {
-            lenisRef.current?.lenis?.raf(time * 500);
+            lenisRef.current?.lenis?.raf(time * 400);
         }
 
         gsap.ticker.add(update);
